@@ -1,7 +1,12 @@
 import { Plus, Zap } from "lucide-react";
 import { translations } from "./translations";
 
-export type AdminTab = "destinations" | "tickets" | "deals";
+export type AdminTab =
+  | "destinations"
+  | "tickets"
+  | "deals"
+  | "accommodations"
+  | "travelOffers";
 
 type AdminHeaderProps = {
   activeTab: AdminTab;
@@ -25,7 +30,7 @@ export default function AdminHeader({
           {t.title}
         </h1>
 
-        <div className="flex bg-slate-100 p-1 rounded-2xl mt-4">
+        <div className="flex flex-wrap bg-slate-100 p-1 rounded-2xl mt-4 gap-1">
           <button
             type="button"
             onClick={() => onTabChange("destinations")}
@@ -36,6 +41,28 @@ export default function AdminHeader({
             }`}
           >
             {t.tabDestinations}
+          </button>
+          <button
+            type="button"
+            onClick={() => onTabChange("accommodations")}
+            className={`px-6 py-2 rounded-xl text-sm font-black transition-all ${
+              activeTab === "accommodations"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-400 hover:text-slate-600"
+            }`}
+          >
+            {t.tabAccommodations}
+          </button>
+          <button
+            type="button"
+            onClick={() => onTabChange("travelOffers")}
+            className={`px-6 py-2 rounded-xl text-sm font-black transition-all ${
+              activeTab === "travelOffers"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-400 hover:text-slate-600"
+            }`}
+          >
+            {t.tabTravelOffers}
           </button>
           <button
             type="button"

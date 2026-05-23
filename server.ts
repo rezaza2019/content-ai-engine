@@ -38,6 +38,8 @@ async function startServer() {
     destinations: process.env.WP_DESTINATION_POST_TYPE || "destination",
     tickets: process.env.WP_TICKET_POST_TYPE || "ticket",
     deals: process.env.WP_DEAL_POST_TYPE || "deal",
+    accommodations: process.env.WP_ACCOMMODATION_POST_TYPE || "accommodations",
+    travelOffers: process.env.WP_TRAVEL_OFFER_POST_TYPE || "travel-offers",
   };
 
   const wpAuthHeader = () => {
@@ -105,6 +107,50 @@ async function startServer() {
     meta: post.meta,
   });
 
+  const normalizeWpAccommodation = (post: any) => ({
+    id: post.id,
+    slug: post.slug,
+    date: post.date,
+    modified: post.modified,
+    title: post.title,
+    content: post.content,
+    excerpt: post.excerpt,
+    status: post.status,
+    link: post.link,
+    imageUrl: post?._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
+    name: getWpField(post, "name"),
+    country: getWpField(post, "country"),
+    region: getWpField(post, "region"),
+    city: getWpField(post, "city"),
+    rating: getWpField(post, "rating"),
+    review_count: getWpField(post, "review_count"),
+    facilities: getWpField(post, "facilities"),
+    acf: post.acf,
+    meta: post.meta,
+  });
+
+  const normalizeWpTravelOffer = (post: any) => ({
+    id: post.id,
+    slug: post.slug,
+    date: post.date,
+    modified: post.modified,
+    title: post.title,
+    excerpt: post.excerpt,
+    status: post.status,
+    link: post.link,
+    imageUrl: post?._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
+    price_per_person_from: getWpField(post, "price_per_person_from"),
+    duration_days: getWpField(post, "duration_days"),
+    departure_date: getWpField(post, "departure_date"),
+    departure_airport: getWpField(post, "departure_airport"),
+    board_type: getWpField(post, "board_type"),
+    transfer_included: getWpField(post, "transfer_included"),
+    accommodation: getWpField(post, "accommodation"),
+    destination_term: getWpField(post, "destination_term"),
+    acf: post.acf,
+    meta: post.meta,
+  });
+
   const buildDestinationPayload = (destination: any) => {
     const customFields = {
       price: destination.price ?? "",
@@ -120,6 +166,62 @@ async function startServer() {
       title: destination.title?.rendered ?? destination.title ?? "",
       content: destination.content?.rendered ?? destination.content ?? "",
       status: "publish",
+      acf: customFields,
+    };
+
+    if (process.env.WP_WRITE_META === "true") {
+      payload.meta = customFields;
+    }
+
+    return payload;
+  };
+
+  const buildAccommodationPayload = (accommodation: any) => {
+    const customFields = {
+      name: accommodation.name ?? "",
+      country: accommodation.country ?? "",
+      region: accommodation.region ?? "",
+      city: accommodation.city ?? "",
+      rating: accommodation.rating ?? "",
+      review_count: accommodation.review_count ?? "",
+      facilities: accommodation.facilities ?? [],
+    };
+
+    const payload: any = {
+      title:
+        accommodation.title?.rendered ??
+        accommodation.title ??
+        customFields.name ??
+        "",
+      content: accommodation.content?.rendered ?? accommodation.content ?? "",
+      excerpt: accommodation.excerpt?.rendered ?? accommodation.excerpt ?? "",
+      status: accommodation.status ?? "publish",
+      acf: customFields,
+    };
+
+    if (process.env.WP_WRITE_META === "true") {
+      payload.meta = customFields;
+    }
+
+    return payload;
+  };
+
+  const buildTravelOfferPayload = (offer: any) => {
+    const customFields = {
+      price_per_person_from: offer.price_per_person_from ?? "",
+      duration_days: offer.duration_days ?? "",
+      departure_date: offer.departure_date ?? "",
+      departure_airport: offer.departure_airport ?? "",
+      board_type: offer.board_type ?? "",
+      transfer_included: offer.transfer_included ?? false,
+      accommodation: offer.accommodation ?? null,
+      destination_term: offer.destination_term ?? null,
+    };
+
+    const payload: any = {
+      title: offer.title?.rendered ?? offer.title ?? "",
+      excerpt: offer.excerpt?.rendered ?? offer.excerpt ?? "",
+      status: offer.status ?? "publish",
       acf: customFields,
     };
 
@@ -335,6 +437,134 @@ async function startServer() {
       console.error("WordPress Deals Error:", error);
       res.status(502).json({
         error: error instanceof Error ? error.message : "Failed to fetch WordPress deals",
+      });
+    }
+  });
+
+  app.get("/api/wp/accommodations", async (req, res) => {
+    try {
+      const posts = await wpRequest(
+        `/${wpPostTypes.accommodations}?per_page=100&_embed=1`,
+      );
+      res.json(posts.map(normalizeWpAccommodation));
+    } catch (error) {
+      console.error("WordPress Accommodations Error:", error);
+      res.status(502).json({
+        error: error instanceof Error ? error.message : "Failed to fetch WordPress accommodations",
+      });
+    }
+  });
+
+  app.post("/api/wp/accommodations", async (req, res) => {
+    try {
+      const post = await wpRequest(`/${wpPostTypes.accommodations}`, {
+        method: "POST",
+        body: JSON.stringify(buildAccommodationPayload(req.body)),
+      });
+      res.json(normalizeWpAccommodation(post));
+    } catch (error) {
+      console.error("WordPress Create Accommodation Error:", error);
+      res.status(502).json({
+        error: error instanceof Error ? error.message : "Failed to create WordPress accommodation",
+      });
+    }
+  });
+
+  app.put("/api/wp/accommodations/:id", async (req, res) => {
+    try {
+      const post = await wpRequest(
+        `/${wpPostTypes.accommodations}/${req.params.id}`,
+        {
+          method: "POST",
+          body: JSON.stringify(buildAccommodationPayload(req.body)),
+        },
+      );
+      res.json(normalizeWpAccommodation(post));
+    } catch (error) {
+      console.error("WordPress Update Accommodation Error:", error);
+      res.status(502).json({
+        error: error instanceof Error ? error.message : "Failed to update WordPress accommodation",
+      });
+    }
+  });
+
+  app.delete("/api/wp/accommodations/:id", async (req, res) => {
+    try {
+      const post = await wpRequest(
+        `/${wpPostTypes.accommodations}/${req.params.id}`,
+        {
+          method: "DELETE",
+        },
+      );
+      res.json(post);
+    } catch (error) {
+      console.error("WordPress Delete Accommodation Error:", error);
+      res.status(error instanceof WordPressRequestError ? error.status : 502).json({
+        error: error instanceof Error ? error.message : "Failed to delete WordPress accommodation",
+      });
+    }
+  });
+
+  app.get("/api/wp/travel-offers", async (req, res) => {
+    try {
+      const posts = await wpRequest(
+        `/${wpPostTypes.travelOffers}?per_page=100&_embed=1`,
+      );
+      res.json(posts.map(normalizeWpTravelOffer));
+    } catch (error) {
+      console.error("WordPress Travel Offers Error:", error);
+      res.status(502).json({
+        error: error instanceof Error ? error.message : "Failed to fetch WordPress travel offers",
+      });
+    }
+  });
+
+  app.post("/api/wp/travel-offers", async (req, res) => {
+    try {
+      const post = await wpRequest(`/${wpPostTypes.travelOffers}`, {
+        method: "POST",
+        body: JSON.stringify(buildTravelOfferPayload(req.body)),
+      });
+      res.json(normalizeWpTravelOffer(post));
+    } catch (error) {
+      console.error("WordPress Create Travel Offer Error:", error);
+      res.status(502).json({
+        error: error instanceof Error ? error.message : "Failed to create WordPress travel offer",
+      });
+    }
+  });
+
+  app.put("/api/wp/travel-offers/:id", async (req, res) => {
+    try {
+      const post = await wpRequest(
+        `/${wpPostTypes.travelOffers}/${req.params.id}`,
+        {
+          method: "POST",
+          body: JSON.stringify(buildTravelOfferPayload(req.body)),
+        },
+      );
+      res.json(normalizeWpTravelOffer(post));
+    } catch (error) {
+      console.error("WordPress Update Travel Offer Error:", error);
+      res.status(502).json({
+        error: error instanceof Error ? error.message : "Failed to update WordPress travel offer",
+      });
+    }
+  });
+
+  app.delete("/api/wp/travel-offers/:id", async (req, res) => {
+    try {
+      const post = await wpRequest(
+        `/${wpPostTypes.travelOffers}/${req.params.id}`,
+        {
+          method: "DELETE",
+        },
+      );
+      res.json(post);
+    } catch (error) {
+      console.error("WordPress Delete Travel Offer Error:", error);
+      res.status(error instanceof WordPressRequestError ? error.status : 502).json({
+        error: error instanceof Error ? error.message : "Failed to delete WordPress travel offer",
       });
     }
   });
