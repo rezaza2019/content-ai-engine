@@ -12,9 +12,13 @@ import {
 import { fetchTicketDeals, TicketProduct } from "../services/ticketApi";
 import { fetchWpTickets } from "../services/ticketWpApi";
 import { fetchDeals } from "../services/dealApi";
+import { fetchAccommodations } from "../services/accommodationApi";
+import { fetchTravelOffers } from "../services/travelOfferApi";
 import { mergeTickets } from "../utils/mergeTickets";
 import { Destination } from "../types/destination";
 import { Deal } from "../types/deal";
+import { Accommodation } from "../types/accommodation";
+import { TravelOffer } from "../types/travelOffer";
 import { MergedTicket } from "../types/ticket";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -26,6 +30,8 @@ import DestinationTable from "./DestinationTable";
 import DestinationEditModal from "./DestinationEditModal";
 import TicketsTable from "./TicketsTable";
 import DealsTable from "./DealsTable";
+import AccommodationsTable from "./AccommodationsTable";
+import TravelOffersTable from "./TravelOffersTable";
 import { Trash2, X, Zap } from "lucide-react";
 import { translations } from "./translations";
 
@@ -33,6 +39,8 @@ export default function AdminPage() {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [tickets, setTickets] = useState<MergedTicket[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
+  const [travelOffers, setTravelOffers] = useState<TravelOffer[]>([]);
   const [activeTab, setActiveTab] = useState<AdminTab>("destinations");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +69,7 @@ export default function AdminPage() {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError(null);
       if (activeTab === "destinations") {
         const data = await fetchDestinations();
         setDestinations(data);
@@ -71,9 +80,15 @@ export default function AdminPage() {
         ]);
         const merged = mergeTickets(ttData, wpData, "en");
         setTickets(merged);
-      } else {
+      } else if (activeTab === "deals") {
         const data = await fetchDeals();
         setDeals(data);
+      } else if (activeTab === "accommodations") {
+        const data = await fetchAccommodations();
+        setAccommodations(data);
+      } else {
+        const data = await fetchTravelOffers();
+        setTravelOffers(data);
       }
     } catch (err) {
       setError(`Failed to load ${activeTab}.`);
@@ -283,8 +298,12 @@ export default function AdminPage() {
               onEdit={setEditingTicket}
               onQuickImport={handleQuickImportTicket}
             />
-          ) : (
+          ) : activeTab === "deals" ? (
             <DealsTable deals={deals} />
+          ) : activeTab === "accommodations" ? (
+            <AccommodationsTable accommodations={accommodations} />
+          ) : (
+            <TravelOffersTable offers={travelOffers} />
           )}
         </div>
       </main>
