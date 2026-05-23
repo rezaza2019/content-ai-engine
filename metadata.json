@@ -1,0 +1,6 @@
+{
+  "name": "Daisycon Datafeed Explorer",
+  "description": "A high-performance tool for browsing and filtering large travel datafeeds from Daisycon.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

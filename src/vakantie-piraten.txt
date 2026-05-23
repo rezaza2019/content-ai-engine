@@ -1,0 +1,187 @@
+read this kind of content first to get an idea of the output format based on the provided json.
+content should be first in Dutch, then translate to syrian arabic.
+minimum 100 words for each language.
+
+
+== json ==
+{
+  "daisycon_unique_id": "bd805301e5c4bfa04e166e1ea25768a8",
+  "previous_daisycon_unique_id": null,
+  "data_hash": "048dd6571095e41071c28e1fd778d9b8",
+  "status": "active",
+  "insert_date": "2026-04-22 09:17:17",
+  "update_date": "2026-05-11 09:51:25",
+  "delete_date": null,
+  "discount_percentage": 0,
+  "priority": 1,
+  "accommodation_bathrooms": "",
+  "accommodation_bedrooms": "",
+  "accommodation_floors": "",
+  "accommodation_rooms": "",
+  "accommodation_toilets": "",
+  "max_nr_people": "",
+  "duration_days": 6,
+  "duration_nights": 5,
+  "star_rating": 4,
+  "google_category_id": "",
+  "discount_amount": 0,
+  "price": 269,
+  "price_old": 269,
+  "distance_to_bakery": "",
+  "distance_to_beach": "",
+  "distance_to_citycenter": "",
+  "distance_to_golfcourse": "",
+  "distance_to_restaurant": "",
+  "distance_to_shopping": "",
+  "distance_to_swimwater": "",
+  "accommodation_lowest_price": "",
+  "accommodation_sqm_floors": "",
+  "departure_date_price": "",
+  "destination_latitude": "",
+  "destination_longitude": "",
+  "departure_latitude": "",
+  "departure_longitude": "",
+  "brand": "",
+  "category": "",
+  "category_path": "",
+  "color_primary": "",
+  "discount": "false",
+  "sku": "299f8d21-9b5e-45f8-8614-f35d48d7ace2|last minute|269",
+  "keywords": "departure period - last minute",
+  "title": "Aparthotel Golden Line",
+  "accommodation_name": "Aparthotel Golden Line",
+  "accommodation_address": "",
+  "destination_zipcode": "",
+  "airport_departure": "CRL",
+  "airport_destination": "",
+  "airportcode_departure": "",
+  "airportcode_destination": "",
+  "departure_city": "",
+  "destination_city": "Golden Sands",
+  "departure_continent": "",
+  "departure_port": "",
+  "departure_time": "",
+  "destination_region": "Varna",
+  "destination_continent": "",
+  "destination_country_description": "Bulgarije",
+  "destination_language": "",
+  "destination_location_description": "",
+  "destination_port": "",
+  "travel_tour_operator": "",
+  "travel_transportation_type": "Flight",
+  "departure_region": "",
+  "model": "299f8d21-9b5e-45f8-8614-f35d48d7ace2",
+  "airline_code": "",
+  "airport_departure_return": "",
+  "airport_destination_return": "",
+  "airportcode_departure_return": "",
+  "airportcode_destination_return": "",
+  "airline_code_return": "",
+  "airline": "",
+  "airline_return": "",
+  "google_category_path": "",
+  "description": "Aparthotel Golden Line is een 4-sterrenaccommodatie gelegen in Golden Sands in Bulgarije.",
+  "departure_times": "",
+  "available_from": "",
+  "accommodation_lowest_date": "",
+  "departure_date": "2026-05-19",
+  "arrival_date": "",
+  "departure_date_return": "",
+  "link": "https://ds1.nl/c/?si=7805&li=1685586&wi=263320&pid=bd805301e5c4bfa04e166e1ea25768a8&dl=bulgarije%2Fvarna%2Fgolden_sands%2Faparthotel_golden_line%3Fdeparturedate%3D2026-05-19%26room%3D2_0_0%26transporttype%3DVL%26departureairport%3DCRL%26boardingtype%3DLO%26trip_duration%3D6&ws=",
+  "destination_country_link": "",
+  "destination_region_link": "",
+  "destination_city_link": "",
+  "brand_logo": "",
+  "ean": "",
+  "in_stock": "",
+  "has_airco": "",
+  "has_microwave": "",
+  "available": "",
+  "accommodation_type": "",
+  "accommodation_child_friendly": "",
+  "has_livingroom": "",
+  "accommodation_on_holiday_park": "",
+  "accommodation_pets_allowed": "",
+  "accommodation_smoking_allowed": "",
+  "has_electricity": "",
+  "has_barbecue": "",
+  "has_child_chair": "",
+  "has_dishwasher": "",
+  "has_garage": "",
+  "has_garden": "",
+  "has_heating": "",
+  "has_internet": "",
+  "has_playground": "",
+  "has_sauna": "",
+  "has_swimmingpool": "",
+  "has_telephone": "",
+  "has_television": "",
+  "has_washingmachine": "",
+  "departure_country": "BE",
+  "destination_country": "BG",
+  "travel_trip_type": "LO",
+  "trip_lastminute": "true",
+  "trip_holiday_type": "",
+  "currency": "EUR",
+  "images": [
+    {
+      "size": "small",
+      "tag": "default",
+      "type": "Default image for the product",
+      "location": "https://tools.vakantiediscounter.nl/tools/content/images/accommodations/299f8d21-9b5e-45f8-8614-f35d48d7ace2/970/0.jpg"
+    },
+    {
+      "size": "small",
+      "tag": "detail",
+      "type": "Detailed view of the product",
+      "location": "https://tools.vakantiediscounter.nl/tools/content/images/accommodations/299f8d21-9b5e-45f8-8614-f35d48d7ace2/970/1.jpg"
+    },
+    {
+      "size": "small",
+      "tag": "detail",
+      "type": "Detailed view of the product",
+      "location": "https://tools.vakantiediscounter.nl/tools/content/images/accommodations/299f8d21-9b5e-45f8-8614-f35d48d7ace2/970/2.jpg"
+    }
+  ],
+  "extra_data": {
+    "product_acco_url_vd": "https://www.vakantiediscounter.nl/bulgarije/varna/golden_sands/aparthotel_golden_line",
+    "product_duration_category": "[6-10]",
+    "product_category_path": "299f8d21-9b5e-45f8-8614-f35d48d7ace2|departure period|last minute|CRL|LO|VL",
+    "product_terms_and_conditions": "Alle prijzen zijn incl. 12,50 euro per boeking voor SGR en Calamiteitenfonds. Eventuele kosten ter plaatse staan bij de beschrijving van de accommodatie op de website van de VakantieDiscounter.",
+    "product_min_nr_people": "2",
+    "product_category": "VL",
+    "product_trustyou_rating": "8,5"
+  }
+}
+
+=== example 1 ===
+
+Waar vind je dat nog? Een 4-daagse zonvakantie inclusief vluchten vanaf Eindhoven en een fijn hotel voor maar €179 per persoon. 8 dagen kan voor €100 meer.
+
+Voor slechts €10 extra krijg je er ook nog eens 4x een ontbijtje bij! Voor €40 p.p. heb je ook een retourtransfer bij de prijs inbegrepen.
+
+Je boekt deze deal via eSky en ze zorgen ervoor dat je de beste prijs krijgt. Het Hotel Sur (8,2/10) heeft een buitenzwembad, een fitnessruimte en een lounge waar je goed kunt relaxen. Het strand bevindt zich op slechts 5 minuten loopafstand. Wacht niet langer en boek je fantastische vakantie voor een minimale prijs!
+
+==
+
+=== example 2 ===
+
+Het Seaside Los Jameos Playa op Lanzarote is dé droomplek voor wie zoekt naar strand, luxe en rust, met de gezellige levendigheid van het centrum binnen handbereik.🏖️. Dit 5-sterrenhotel ligt direct aan de boulevard en het goudgele strand Playa de Los Pocillos. Het resort voelt als een tropisch dorpje vol met palmbomen en kleurrijke gebouwen 🌴. De kamers zijn licht, ruim en voorzien van een balkon of terras, perfect om even bij te komen na een dag in de zon. En met het gezellige centrum van Puerto del Carmen op wandelafstand zit je hier helemaal goed voor een relaxte én levendige vakantie.
+
+😎 Hier hoef je echt nergens aan te denken. Chill met een goed boek op een ligbedje bij één van de zwembaden, terwijl de kids zich uitleven in het kinderbad, de speeltuin of de miniclub. Toe aan wat actie? Doe mee met yoga, fitness of een potje beachvolleybal. Liever ontspannen? Duik de spa in met sauna en Turks stoombad. ’s Avonds wordt het pas echt feest: uitgebreide buffetten met live cooking, verse vis, vlees of vega en daarna een drankje bij één van de bars of een gezellige show.
+
+Ook buiten het hotel is er genoeg te beleven. Wandel over de boulevard naar Puerto del Carmen voor gezellige restaurants en winkels, of ga op avontuur in het indrukwekkende vulkaanlandschap van Nationaal Park Timanfaya, waar je je even op een andere planeet waant. Bezoek het groene kratermeer bij El Golfo, wandel door vulkanische velden of geniet van het weidse uitzicht bij Mirador del Río. Lanzarote zit vol leuke verrassingen en dit hotel is de perfecte uitvalsbasis om alles te ontdekken.
+
+Deze heerlijke 8-daagse vakantie boek je via TUI vanaf €1079 p.p. incl. ontbijt en vluchten vanaf Schiphol. Uiteraard is het mogelijk om voor een langer verblijf te kiezen.
+
+Wil jij nog meer deals zien? Download onze app om sneller op de hoogte te zijn van de beste deals!
+
+
+===example 3===
+
+We nemen je mee op reis naar het prachtige Tenerife. Dit eiland heeft alles wat je nodig hebt, zon, sangría en prachtige stranden. Je verblijft lekker dichtbij het strand, maar ook het waterpark Lago Martianez is om de hoek te vinden. Ook het unieke lavazandstrand Playa Jardin is dichtbij en gemakkelijk te bezoeken.
+
+Je verblijft in 4*-Be Live Tenerife Resort, een fijn resort met een adults only en een all-inclusive formule. Hier heb je ontzettend veel mogelijkheden om te genieten van een relaxte vakantie. Geniet van de tropische tuin, het zwembad, het zonneterras en de heerlijke ligbedden.
+
+Met deze deal van D-Reizen verblijf je 8 dagen in het prachtige resort, op basis van all-inclusive verzorging en inclusief vluchten & transfer voor €699 p.p. Je hebt de mogelijkheid om te vertrekken vanaf veel verschillende vliegvelden en uiteraard is het mogelijk om de verblijfsduur ook aan te passen.
+
