@@ -59,6 +59,7 @@ export default function DestinationEditPage() {
       setDestination({
         ...destination,
         title: { ...destination.title, rendered: value },
+        destination_name: value,
       });
     } else if (field === "content") {
       setDestination({
@@ -94,13 +95,26 @@ export default function DestinationEditPage() {
       );
 
       if (generated.content) updateField("content", generated.content);
-      if (generated.price) updateField("price", generated.price);
-      if (generated.duration) updateField("duration", generated.duration);
       if (generated.destination_region) {
         updateField("destination_region", generated.destination_region);
       }
       if (generated.destination_country) {
         updateField("destination_country", generated.destination_country);
+      }
+      if (generated.destination_name_farsi) {
+        updateField("destination_name_farsi", generated.destination_name_farsi);
+      }
+      if (generated.destination_region_fa) {
+        updateField("destination_region_fa", generated.destination_region_fa);
+      }
+      if (generated.destination_country_fa) {
+        updateField("destination_country_fa", generated.destination_country_fa);
+      }
+      if (generated.destination_region_description_farsi) {
+        updateField(
+          "destination_region_description_farsi",
+          generated.destination_region_description_farsi,
+        );
       }
     } catch (err: any) {
       alert(err.message);

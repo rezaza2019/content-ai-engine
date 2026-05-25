@@ -18,6 +18,7 @@ export type TravelOffer = {
   transfer_included?: boolean;
   accommodation?: string | number | Record<string, unknown> | null;
   destination_term?: string | number | Record<string, unknown> | null;
+  affiliate_link?: string;
   acf?: Record<string, unknown>;
   meta?: Record<string, unknown>;
 };

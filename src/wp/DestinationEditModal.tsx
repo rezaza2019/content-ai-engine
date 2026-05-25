@@ -33,11 +33,19 @@ export default function DestinationEditModal({
 
   const aiFields = [
     { key: "content", label: t.content },
-    { key: "price", label: t.price },
-    { key: "duration", label: t.duration },
     { key: "destination_region", label: t.region },
     { key: "destination_country", label: t.country },
+    { key: "destination_name_farsi", label: t.destinationNameFarsi },
+    { key: "destination_region_fa", label: t.destinationRegionFarsi },
+    { key: "destination_country_fa", label: t.destinationCountryFarsi },
+    {
+      key: "destination_region_description_farsi",
+      label: t.destinationRegionDescriptionFarsi,
+    },
   ];
+
+  const inputClassName =
+    "w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 shadow-inner";
 
   const content = (
     <div
@@ -73,7 +81,7 @@ export default function DestinationEditModal({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="md:col-span-2">
               <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-3">
-                {t.name}
+                {t.destinationName}
               </label>
               <input
                 type="text"
@@ -81,51 +89,37 @@ export default function DestinationEditModal({
                 onChange={(event) =>
                   onUpdateField("title", event.target.value)
                 }
-                className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 text-lg shadow-inner"
+                className={`${inputClassName} text-lg`}
                 required
-                placeholder="Destination title..."
+                placeholder="Destination name..."
               />
             </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1">
-                {t.price} (EUR)
-              </label>
-              <input
-                type="number"
-                value={destination.price || ""}
-                onChange={(event) =>
-                  onUpdateField("price", event.target.value)
-                }
-                className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 shadow-inner"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1">
-                {t.duration} ({t.days})
+                {t.destinationIdentifier}
               </label>
               <input
                 type="text"
-                value={destination.duration || ""}
+                value={destination.destination_identifier || ""}
                 onChange={(event) =>
-                  onUpdateField("duration", event.target.value)
+                  onUpdateField("destination_identifier", event.target.value)
                 }
-                className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 shadow-inner"
+                className={inputClassName}
               />
             </div>
 
             <div className="space-y-2">
               <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1">
-                {t.departure}
+                {t.typeOfDestination}
               </label>
               <input
-                type="date"
-                value={destination.departure_date || ""}
+                type="text"
+                value={destination.type_of_destination || ""}
                 onChange={(event) =>
-                  onUpdateField("departure_date", event.target.value)
+                  onUpdateField("type_of_destination", event.target.value)
                 }
-                className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 shadow-inner"
+                className={inputClassName}
               />
             </div>
 
@@ -139,7 +133,7 @@ export default function DestinationEditModal({
                 onChange={(event) =>
                   onUpdateField("destination_region", event.target.value)
                 }
-                className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 shadow-inner"
+                className={inputClassName}
               />
             </div>
 
@@ -153,21 +147,66 @@ export default function DestinationEditModal({
                 onChange={(event) =>
                   onUpdateField("destination_country", event.target.value)
                 }
-                className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 shadow-inner"
+                className={inputClassName}
               />
             </div>
 
-            <div className="md:col-span-1 space-y-2">
+            <div className="space-y-2">
               <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1">
-                {t.link}
+                {t.destinationNameFarsi}
               </label>
               <input
-                type="url"
-                value={destination.aff_link || ""}
+                type="text"
+                value={destination.destination_name_farsi || ""}
                 onChange={(event) =>
-                  onUpdateField("aff_link", event.target.value)
+                  onUpdateField("destination_name_farsi", event.target.value)
                 }
-                className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent focus:border-sky-500 focus:bg-white rounded-2xl outline-none transition-all duration-300 font-bold text-slate-900 shadow-inner"
+                className={inputClassName}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1">
+                {t.destinationRegionFarsi}
+              </label>
+              <input
+                type="text"
+                value={destination.destination_region_fa || ""}
+                onChange={(event) =>
+                  onUpdateField("destination_region_fa", event.target.value)
+                }
+                className={inputClassName}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1">
+                {t.destinationCountryFarsi}
+              </label>
+              <input
+                type="text"
+                value={destination.destination_country_fa || ""}
+                onChange={(event) =>
+                  onUpdateField("destination_country_fa", event.target.value)
+                }
+                className={inputClassName}
+              />
+            </div>
+
+            <div className="md:col-span-2 space-y-2">
+              <label className="block text-sm font-black text-slate-400 uppercase tracking-widest mb-1">
+                {t.destinationRegionDescriptionFarsi}
+              </label>
+              <textarea
+                value={destination.destination_region_description_farsi || ""}
+                onChange={(event) =>
+                  onUpdateField(
+                    "destination_region_description_farsi",
+                    event.target.value,
+                  )
+                }
+                rows={4}
+                className={`${inputClassName} font-medium leading-relaxed`}
               />
             </div>
 

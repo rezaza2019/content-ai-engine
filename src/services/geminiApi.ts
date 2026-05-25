@@ -1,9 +1,11 @@
 type GeneratedDestinationContent = {
   content?: string;
-  price?: string;
-  duration?: string;
   destination_region?: string;
   destination_country?: string;
+  destination_name_farsi?: string;
+  destination_region_fa?: string;
+  destination_country_fa?: string;
+  destination_region_description_farsi?: string;
 };
 
 export async function generateDestinationContent(

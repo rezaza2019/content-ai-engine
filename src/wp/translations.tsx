@@ -14,6 +14,13 @@ export const translations = {
       "Paste destination info here (text from any site or brochure):",
     importBtn: "Analyze & Create",
     destination: "Destination",
+    destinationName: "Destination Name",
+    destinationIdentifier: "Destination Identifier",
+    typeOfDestination: "Type of Destination",
+    destinationNameFarsi: "Destination Name (Farsi)",
+    destinationRegionFarsi: "Destination Region (Farsi)",
+    destinationCountryFarsi: "Destination Country (Farsi)",
+    destinationRegionDescriptionFarsi: "Region Description (Farsi)",
     price: "Price",
     duration: "Duration",
     departure: "Departure Date",
@@ -36,6 +43,34 @@ export const translations = {
     noDeals: "No deals found.",
     noAccommodations: "No accommodations found.",
     noTravelOffers: "No travel offers found.",
+    accommodationJsonImport: "Import (JSON)",
+    accommodationJsonImportHint:
+      "Paste one object, an array [ {...}, {...} ], or multiple comma-separated objects.",
+    accommodationJsonPaste: "Paste accommodation JSON:",
+    accommodationJsonValidate: "Validate JSON",
+    accommodationJsonValid: "Valid JSON. Found {count} accommodation(s).",
+    accommodationJsonInvalid: "Invalid JSON.",
+    accommodationJsonInsert: "Insert to WordPress",
+    accommodationJsonInserting: "Inserting...",
+    accommodationJsonInsertProgress: "Import progress",
+    accommodationJsonInsertCreated: "Created {count} new accommodation(s).",
+    accommodationJsonInsertSkipped:
+      "Skipped {count} accommodation(s) already in WordPress.",
+    accommodationJsonInsertTravelOffers: "Created {count} travel offer(s).",
+    accommodationJsonInsertTravelOffersSkipped:
+      "Skipped {count} duplicate travel offer(s).",
+    accommodationJsonInsertDestinationsCreated:
+      "Created {count} destination(s).",
+    accommodationJsonInsertDestinationsSkipped:
+      "Skipped {count} existing destination(s).",
+    accommodationJsonInsertDestinationsUpdated:
+      "Updated {count} destination(s).",
+    accommodationJsonInsertSuccess:
+      "Successfully inserted {count} accommodation(s) into WordPress.",
+    accommodationJsonInsertFailed: "Failed to insert into WordPress.",
+    accommodationJsonInsertNoCredentials:
+      "WordPress write credentials are missing. Add WP_USERNAME and WP_APP_PASSWORD to .env and restart the server.",
+    accommodationJsonParsed: "Found {count} accommodation(s) ready to import.",
     saveFailed: "Save failed",
     days: "days",
     success: "Saved successfully",

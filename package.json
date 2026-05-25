@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch server.ts --watch config.ts --watch cache.ts --exec tsx server.ts",
+    "dev": "nodemon --watch server.ts --watch config.ts --watch cache.ts --watch src --exec tsx server.ts",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",

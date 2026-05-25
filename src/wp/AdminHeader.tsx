@@ -1,4 +1,4 @@
-import { Plus, Zap } from "lucide-react";
+import { Braces, Plus, Zap, Link2 } from "lucide-react";
 import { translations } from "./translations";
 
 export type AdminTab =
@@ -13,6 +13,8 @@ type AdminHeaderProps = {
   onTabChange: (tab: AdminTab) => void;
   onAddNew: () => void;
   onSmartImport: () => void;
+  onAccommodationJsonImport: () => void;
+  onTravelOfferUrlImport?: () => void;
 };
 
 export default function AdminHeader({
@@ -20,6 +22,8 @@ export default function AdminHeader({
   onTabChange,
   onAddNew,
   onSmartImport,
+  onAccommodationJsonImport,
+  onTravelOfferUrlImport,
 }: AdminHeaderProps) {
   const t = translations.en;
 
@@ -112,6 +116,26 @@ export default function AdminHeader({
               {t.addNew}
             </button>
           </>
+        )}
+        {activeTab === "accommodations" && (
+          <button
+            type="button"
+            onClick={onAccommodationJsonImport}
+            className="group flex items-center gap-2 bg-white text-slate-700 px-6 py-3 rounded-2xl font-bold border border-slate-200 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+          >
+            <Braces className="w-5 h-5 text-sky-500" />
+            {t.accommodationJsonImport}
+          </button>
+        )}
+        {activeTab === "travelOffers" && onTravelOfferUrlImport && (
+          <button
+            type="button"
+            onClick={onTravelOfferUrlImport}
+            className="group flex items-center gap-2 bg-white text-slate-700 px-6 py-3 rounded-2xl font-bold border border-slate-200 hover:bg-slate-50 transition-all shadow-sm active:scale-95"
+          >
+            <Link2 className="w-5 h-5 text-indigo-600" />
+            Create from URL
+          </button>
         )}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, type ReactNode } from 'react';
 import { 
   Search, 
   RefreshCcw,
@@ -10,10 +10,12 @@ import {
   ChevronRight,
   Settings,
   FileJson,
-  Shield
+  Shield,
+  Menu,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Link, Navigate, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import ApiUrls, { ApiUrl } from './ApiUrls';
 import OfferCard from './OfferCard';
 import Footer from './Footer';
@@ -23,6 +25,8 @@ import ToolsConfigPage from './ToolsConfigPage';
 import JsonDownloaderPage from './JsonDownloaderPage';
 import BlankPage from './wp/admin';
 import DestinationEditPage from './wp/DestinationEditPage';
+import LoginPage from './LoginPage';
+import { fetchAdminAuthStatus, logoutAdmin } from './services/adminAuthApi';
 import { TravelOffer } from './types';
 import { RecentIcon } from './Icons';
 
@@ -37,6 +41,9 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 21;
   const [currentTab, setCurrentTab] = useState<'explorer' | 'sources' | 'regions' | 'config' | 'json-downloader'>('explorer');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
+  const [checkingAdminAuth, setCheckingAdminAuth] = useState(true);
 
   const [urls, setUrls] = useState<ApiUrl[]>([]);
   const [selectedUrlId, setSelectedUrlId] = useState<string>('');
@@ -56,6 +63,13 @@ export default function App() {
   useEffect(() => {
     fetchUrls();
   }, [currentTab]); // Refresh urls when returning from sources tab
+
+  useEffect(() => {
+    fetchAdminAuthStatus()
+      .then((status) => setAdminAuthenticated(status.authenticated))
+      .catch(() => setAdminAuthenticated(false))
+      .finally(() => setCheckingAdminAuth(false));
+  }, []);
 
   useEffect(() => {
     fetch('/api/config-links')
@@ -141,13 +155,50 @@ export default function App() {
 
   const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
   const isWpRoute = location.pathname.startsWith('/wp');
+  const isLoginRoute = location.pathname.startsWith('/login');
+  const showFeedActions =
+    !isWpRoute && !isLoginRoute && !['sources', 'json-downloader'].includes(currentTab);
+  const isLocalhost =
+    typeof window !== 'undefined' &&
+    ['localhost', '127.0.0.1', '0.0.0.0'].includes(window.location.hostname);
+
+  const handleAdminLogout = async () => {
+    await logoutAdmin();
+    setAdminAuthenticated(false);
+    navigate('/login', { replace: true });
+  };
+
+  const requireAdmin = (element: ReactNode) => {
+    if (checkingAdminAuth) {
+      return (
+        <main className="min-h-[calc(100vh-5rem)] flex items-center justify-center">
+          <div className="h-10 w-10 rounded-full border-4 border-slate-200 border-t-indigo-600 animate-spin" />
+        </main>
+      );
+    }
+
+    if (isLocalhost) {
+      return element;
+    }
+
+    if (!adminAuthenticated) {
+      return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    }
+
+    return element;
+  };
 
   const selectTab = (tab: typeof currentTab) => {
     setCurrentTab(tab);
+    setMobileMenuOpen(false);
     if (isWpRoute) {
       navigate('/');
     }
   };
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const airportCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -242,7 +293,7 @@ export default function App() {
           </Link>
         </div>
 
-        <div className={`relative max-w-sm w-full ml-auto hidden sm:block ${isWpRoute || currentTab === 'sources' ? 'opacity-0 pointer-events-none' : ''}`}>
+        <div className={`relative max-w-sm w-full ml-auto hidden sm:block ${isWpRoute || isLoginRoute || currentTab === 'sources' ? 'opacity-0 pointer-events-none' : ''}`}>
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
           <input
             type="text"
@@ -253,33 +304,134 @@ export default function App() {
           />
         </div>
 
-        <div className={`flex items-center gap-3 ${isWpRoute || ['sources', 'json-downloader'].includes(currentTab) ? 'hidden' : ''}`}>
+        <div className="flex items-center gap-2 sm:gap-3">
           <button
-            onClick={() => setSortByRecent(!sortByRecent)}
-            className={`h-10 px-3 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all border ${
-              sortByRecent
-                ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-inner'
-                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-            }`}
-            title="Sort by recently updated"
+            type="button"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="md:hidden h-10 w-10 rounded-xl bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center justify-center transition-colors"
+            aria-label="Open navigation menu"
+            aria-expanded={mobileMenuOpen}
           >
-            <RecentIcon size={16} />
-            <span className="hidden sm:inline">Recent</span>
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <div className="px-3 py-1.5 bg-slate-100 rounded-full text-xs font-semibold text-slate-600 whitespace-nowrap">
-            {loading ? '---' : filteredData.length} Results
-          </div>
+          {showFeedActions && (
+            <>
+              <button
+                onClick={() => setSortByRecent(!sortByRecent)}
+                className={`h-10 px-3 rounded-xl flex items-center gap-2 text-sm font-semibold transition-all border ${
+                  sortByRecent
+                    ? 'bg-indigo-50 border-indigo-200 text-indigo-700 shadow-inner'
+                    : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                }`}
+                title="Sort by recently updated"
+              >
+                <RecentIcon size={16} />
+                <span className="hidden sm:inline">Recent</span>
+              </button>
+              <div className="px-3 py-1.5 bg-slate-100 rounded-full text-xs font-semibold text-slate-600 whitespace-nowrap">
+                {loading ? '---' : filteredData.length} Results
+              </div>
+            </>
+          )}
         </div>
       </div>
+      {mobileMenuOpen && (
+        <nav className="md:hidden border-t border-slate-200 bg-white shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 py-3 grid grid-cols-2 gap-2">
+            <button
+              onClick={() => selectTab('explorer')}
+              className={`h-11 px-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                !isWpRoute && currentTab === 'explorer'
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <Plane size={16} />
+              Feed
+            </button>
+            <button
+              onClick={() => selectTab('sources')}
+              className={`h-11 px-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                !isWpRoute && currentTab === 'sources'
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <Database size={16} />
+              Sources
+            </button>
+            <button
+              onClick={() => selectTab('regions')}
+              className={`h-11 px-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                !isWpRoute && currentTab === 'regions'
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <MapPin size={16} />
+              Regions
+            </button>
+            <button
+              onClick={() => selectTab('config')}
+              className={`h-11 px-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                !isWpRoute && currentTab === 'config'
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <Settings size={16} />
+              Tools
+            </button>
+            <button
+              onClick={() => selectTab('json-downloader')}
+              className={`h-11 px-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                !isWpRoute && currentTab === 'json-downloader'
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <FileJson size={16} />
+              JSON
+            </button>
+            <Link
+              to="/wp"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`h-11 px-3 rounded-xl text-sm font-semibold transition-all flex items-center gap-2 ${
+                isWpRoute
+                  ? 'bg-indigo-50 text-indigo-700'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <Shield size={16} />
+              Admin
+            </Link>
+          </div>
+        </nav>
+      )}
     </header>
   );
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
-      {appHeader}
+      {!isLoginRoute && appHeader}
       <Routes>
-      <Route path="/wp/destinations/:destinationId/edit" element={<DestinationEditPage />} />
-      <Route path="/wp" element={<BlankPage />} />
+      <Route
+        path="/login"
+        element={
+          <LoginPage
+            authenticated={adminAuthenticated}
+            onLogin={() => setAdminAuthenticated(true)}
+          />
+        }
+      />
+      <Route
+        path="/wp/destinations/:destinationId/edit"
+        element={requireAdmin(<DestinationEditPage />)}
+      />
+      <Route
+        path="/wp"
+        element={requireAdmin(<BlankPage onLogout={handleAdminLogout} />)}
+      />
       <Route path="*" element={
         <>
           {currentTab === 'sources' ? (
