@@ -18,6 +18,7 @@ import { mergeTickets } from "../utils/mergeTickets";
 import { Destination } from "../types/destination";
 import { Deal } from "../types/deal";
 import { Accommodation } from "../types/accommodation";
+import { AccommodationImportItem } from "../types/accommodationImport";
 import { TravelOffer } from "../types/travelOffer";
 import { MergedTicket } from "../types/ticket";
 import Header from "./Header";
@@ -32,10 +33,16 @@ import TicketsTable from "./TicketsTable";
 import DealsTable from "./DealsTable";
 import AccommodationsTable from "./AccommodationsTable";
 import TravelOffersTable from "./TravelOffersTable";
+import AccommodationJsonImportModal from "./AccommodationJsonImportModal";
+import TravelOfferUrlModal from "./TravelOfferUrlModal";
 import { Trash2, X, Zap } from "lucide-react";
 import { translations } from "./translations";
 
-export default function AdminPage() {
+type AdminPageProps = {
+  onLogout?: () => void;
+};
+
+export default function AdminPage({ onLogout }: AdminPageProps) {
   const [destinations, setDestinations] = useState<Destination[]>([]);
   const [tickets, setTickets] = useState<MergedTicket[]>([]);
   const [deals, setDeals] = useState<Deal[]>([]);
@@ -59,6 +66,12 @@ export default function AdminPage() {
     string | number | null
   >(null);
   const [showSmartImport, setShowSmartImport] = useState(false);
+  const [showAccommodationJsonImport, setShowAccommodationJsonImport] =
+    useState(false);
+  const [showTravelOfferUrlImport, setShowTravelOfferUrlImport] = useState(false);
+  const [pendingAccommodationImport, setPendingAccommodationImport] = useState<
+    AccommodationImportItem[]
+  >([]);
   const [importText, setImportText] = useState("");
   const [selectedAIFields, setSelectedAIFields] = useState<string[]>([
     "content",
@@ -105,13 +118,15 @@ export default function AdminPage() {
     setEditingDest({
       title: { rendered: "" },
       content: { rendered: "" },
-      price: "",
-      duration: "",
-      departure_date: "",
-      aff_link: "",
       destination_name: "",
+      destination_identifier: "",
+      type_of_destination: "",
+      destination_name_farsi: "",
       destination_region: "",
+      destination_region_fa: "",
       destination_country: "",
+      destination_country_fa: "",
+      destination_region_description_farsi: "",
     });
   };
 
@@ -147,13 +162,10 @@ export default function AdminPage() {
       content: {
         rendered: ticket.properties.descriptionLong?.[0] || ticket.description,
       },
-      price: ticket.price.amount.toString(),
-      duration: "",
       destination_name: ticket.name,
+      destination_identifier: String(ticket.ID),
       destination_region: "",
       destination_country: "",
-      aff_link: ticket.URL,
-      departure_date: "",
     });
   };
 
@@ -166,12 +178,9 @@ export default function AdminPage() {
       setEditingDest({
         title: { rendered: parsed.title },
         content: { rendered: parsed.content || "" },
-        price: parsed.price || "",
-        duration: parsed.duration || "",
+        destination_name: parsed.title,
         destination_region: parsed.destination_region || "",
         destination_country: parsed.destination_country || "",
-        departure_date: "",
-        aff_link: "",
       });
       setShowSmartImport(false);
       setImportText("");
@@ -197,12 +206,22 @@ export default function AdminPage() {
       );
 
       if (generated.content) updateField("content", generated.content);
-      if (generated.price) updateField("price", generated.price);
-      if (generated.duration) updateField("duration", generated.duration);
       if (generated.destination_region)
         updateField("destination_region", generated.destination_region);
       if (generated.destination_country)
         updateField("destination_country", generated.destination_country);
+      if (generated.destination_name_farsi)
+        updateField("destination_name_farsi", generated.destination_name_farsi);
+      if (generated.destination_region_fa)
+        updateField("destination_region_fa", generated.destination_region_fa);
+      if (generated.destination_country_fa)
+        updateField("destination_country_fa", generated.destination_country_fa);
+      if (generated.destination_region_description_farsi) {
+        updateField(
+          "destination_region_description_farsi",
+          generated.destination_region_description_farsi,
+        );
+      }
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -250,6 +269,7 @@ export default function AdminPage() {
       setEditingDest({
         ...editingDest,
         title: { ...editingDest.title, rendered: value },
+        destination_name: value,
       });
     } else if (field === "content") {
       setEditingDest({
@@ -266,7 +286,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] font-outfit" dir="ltr">
-      <Header onSearch={() => {}} />
+      <Header onSearch={() => {}} onLogout={onLogout} />
 
       <main className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -275,6 +295,8 @@ export default function AdminPage() {
             onTabChange={setActiveTab}
             onAddNew={handleAddNew}
             onSmartImport={() => setShowSmartImport(true)}
+            onAccommodationJsonImport={() => setShowAccommodationJsonImport(true)}
+            onTravelOfferUrlImport={() => setShowTravelOfferUrlImport(true)}
           />
 
           {loading ? (
@@ -463,6 +485,30 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {showAccommodationJsonImport && (
+        <AccommodationJsonImportModal
+          onClose={() => setShowAccommodationJsonImport(false)}
+          onParsed={setPendingAccommodationImport}
+          onInsertSuccess={() => {
+            if (activeTab === "accommodations") {
+              loadData();
+            }
+          }}
+        />
+      )}
+
+      {showTravelOfferUrlImport && (
+        <TravelOfferUrlModal
+          isOpen={showTravelOfferUrlImport}
+          onClose={() => setShowTravelOfferUrlImport(false)}
+          onSuccess={() => {
+            if (activeTab === "travelOffers") {
+              loadData();
+            }
+          }}
+        />
       )}
 
       <Footer />
