@@ -188,6 +188,26 @@ export default function App() {
     return element;
   };
 
+  const requireAppLogin = (element: ReactNode) => {
+    if (isLocalhost || isLoginRoute) {
+      return element;
+    }
+
+    if (checkingAdminAuth) {
+      return (
+        <main className="min-h-screen flex items-center justify-center bg-slate-50">
+          <div className="h-10 w-10 rounded-full border-4 border-slate-200 border-t-indigo-600 animate-spin" />
+        </main>
+      );
+    }
+
+    if (!adminAuthenticated) {
+      return <Navigate to="/login" replace state={{ from: location.pathname }} />;
+    }
+
+    return element;
+  };
+
   const selectTab = (tab: typeof currentTab) => {
     setCurrentTab(tab);
     setMobileMenuOpen(false);
@@ -411,7 +431,7 @@ export default function App() {
     </header>
   );
 
-  return (
+  return requireAppLogin(
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
       {!isLoginRoute && appHeader}
       <Routes>
@@ -617,6 +637,6 @@ export default function App() {
         </>
       } />
     </Routes>
-    </div>
+    </div>,
   );
 }

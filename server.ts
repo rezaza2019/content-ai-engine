@@ -42,7 +42,6 @@ async function startServer() {
     process.env.ADMIN_PASSWORD ||
     "content-ai-engine-dev-session-secret";
   const adminSessionTtlMs = 1000 * 60 * 60 * 12;
-  const isLocalDevelopment = process.env.NODE_ENV !== "production";
   const isLocalRequest = (req: express.Request) => {
     const host = (req.headers.host || "").split(":")[0];
     return host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
@@ -95,10 +94,6 @@ async function startServer() {
   };
 
   const isAdminAuthenticated = (req: express.Request) => {
-    if (isLocalDevelopment || isLocalRequest(req)) {
-      return false;
-    }
-
     const cookies = parseCookies(req.headers.cookie);
     return isValidSessionToken(cookies.admin_session);
   };
@@ -123,7 +118,7 @@ async function startServer() {
   app.post("/api/admin-auth/login", (req, res) => {
     const { username, password } = req.body || {};
 
-    if (isLocalDevelopment || isLocalRequest(req)) {
+    if (isLocalRequest(req)) {
       return res.status(403).json({
         error:
           "Admin login is disabled on local development. Run the app in a production environment with ADMIN_PASSWORD configured to use admin login.",
@@ -149,7 +144,7 @@ async function startServer() {
     res.json({ authenticated: false });
   });
 
-  app.use("/api/wp", (req, res, next) => {
+  app.use("/api", (req, res, next) => {
     if (isLocalRequest(req)) {
       return next();
     }
