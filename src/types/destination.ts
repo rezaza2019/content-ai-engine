@@ -15,6 +15,8 @@ export type Destination = {
   modified?: string;
   title?: RenderedText;
   content?: RenderedText;
+  link?: string;
+  admin_edit_link?: string;
   destination_name?: string;
   destination_identifier?: string;
   type_of_destination?: string;

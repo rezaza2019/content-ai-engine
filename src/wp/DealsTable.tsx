@@ -1,12 +1,18 @@
-import { ExternalLink, Gift, Globe } from "lucide-react";
+import { Edit, ExternalLink, Gift, Globe, Trash2 } from "lucide-react";
 import { Deal } from "../types/deal";
 import { translations } from "./translations";
 
 type DealsTableProps = {
   deals: Deal[];
+  deletingDealId?: string | number | null;
+  onDelete: (deal: Deal) => void;
 };
 
-export default function DealsTable({ deals }: DealsTableProps) {
+export default function DealsTable({
+  deals,
+  deletingDealId,
+  onDelete,
+}: DealsTableProps) {
   const t = translations.en;
 
   return (
@@ -66,6 +72,34 @@ export default function DealsTable({ deals }: DealsTableProps) {
                       <div className="text-sm text-slate-400 font-medium">
                         #{deal.id} - {deal.slug}
                       </div>
+                      <div className="mt-3 flex items-center gap-2 xl:hidden">
+                        {deal.admin_edit_link ? (
+                          <a
+                            href={deal.admin_edit_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-amber-50 text-amber-600"
+                            title="Edit in WordPress"
+                            aria-label={`Edit deal ${deal.id}`}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </a>
+                        ) : null}
+                        <button
+                          type="button"
+                          onClick={() => onDelete(deal)}
+                          disabled={deletingDealId === deal.id}
+                          className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 disabled:opacity-60"
+                          title="Delete"
+                          aria-label={`Delete deal ${deal.id}`}
+                        >
+                          {deletingDealId === deal.id ? (
+                            <div className="h-4 w-4 rounded-full border-2 border-rose-300 border-t-transparent animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -93,9 +127,21 @@ export default function DealsTable({ deals }: DealsTableProps) {
                     {deal.status || "-"}
                   </span>
                 </td>
-                <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="flex justify-center items-center gap-2">
-                    {deal.link ? (
+                  <td className="px-8 py-6 whitespace-nowrap">
+                    <div className="flex justify-center items-center gap-2">
+                      {deal.admin_edit_link ? (
+                        <a
+                          href={deal.admin_edit_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-2xl transition-all duration-300"
+                          title="Edit in WordPress"
+                          aria-label={`Edit deal ${deal.id}`}
+                        >
+                          <Edit className="w-5 h-5" />
+                        </a>
+                      ) : null}
+                      {deal.link ? (
                       <a
                         href={deal.link}
                         target="_blank"
@@ -105,11 +151,25 @@ export default function DealsTable({ deals }: DealsTableProps) {
                       >
                         <ExternalLink className="w-5 h-5" />
                       </a>
-                    ) : (
-                      <Globe className="w-5 h-5 text-slate-200" />
-                    )}
-                  </div>
-                </td>
+                      ) : (
+                        <Globe className="w-5 h-5 text-slate-200" />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => onDelete(deal)}
+                        disabled={deletingDealId === deal.id}
+                        className="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all duration-300 disabled:opacity-60"
+                        title="Delete"
+                        aria-label={`Delete deal ${deal.id}`}
+                      >
+                        {deletingDealId === deal.id ? (
+                          <div className="h-5 w-5 rounded-full border-2 border-rose-300 border-t-transparent animate-spin" />
+                        ) : (
+                          <Trash2 className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </td>
               </tr>
             ))}
           </tbody>

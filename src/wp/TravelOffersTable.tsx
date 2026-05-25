@@ -1,10 +1,12 @@
-import { ExternalLink, Globe, Plane } from "lucide-react";
+import { Edit, ExternalLink, Globe, Plane, Trash2 } from "lucide-react";
 import { RenderedText } from "../types/destination";
 import { TravelOffer } from "../types/travelOffer";
 import { translations } from "./translations";
 
 type TravelOffersTableProps = {
   offers: TravelOffer[];
+  deletingOfferId?: string | number | null;
+  onDelete: (offer: TravelOffer) => void;
 };
 
 const getPlainTitle = (title?: RenderedText | string) => {
@@ -13,7 +15,11 @@ const getPlainTitle = (title?: RenderedText | string) => {
   return title.rendered?.replace(/<[^>]*>/g, "") || "";
 };
 
-export default function TravelOffersTable({ offers }: TravelOffersTableProps) {
+export default function TravelOffersTable({
+  offers,
+  deletingOfferId,
+  onDelete,
+}: TravelOffersTableProps) {
   const t = translations.en;
 
   return (
@@ -80,6 +86,34 @@ export default function TravelOffersTable({ offers }: TravelOffersTableProps) {
                             {offer.board_type ? ` · ${offer.board_type}` : ""}
                           </div>
                         ) : null}
+                        <div className="mt-3 flex items-center gap-2 xl:hidden">
+                          {offer.admin_edit_link ? (
+                            <a
+                              href={offer.admin_edit_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-amber-50 text-amber-600"
+                              title="Edit in WordPress"
+                              aria-label={`Edit travel offer ${offer.id}`}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </a>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => onDelete(offer)}
+                            disabled={deletingOfferId === offer.id}
+                            className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 disabled:opacity-60"
+                            title="Delete"
+                            aria-label={`Delete travel offer ${offer.id}`}
+                          >
+                            {deletingOfferId === offer.id ? (
+                              <div className="h-4 w-4 rounded-full border-2 border-rose-300 border-t-transparent animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -109,6 +143,18 @@ export default function TravelOffersTable({ offers }: TravelOffersTableProps) {
                   </td>
                   <td className="px-8 py-6 whitespace-nowrap">
                     <div className="flex justify-center items-center gap-2">
+                      {offer.admin_edit_link ? (
+                        <a
+                          href={offer.admin_edit_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-2xl transition-all duration-300"
+                          title="Edit in WordPress"
+                          aria-label={`Edit travel offer ${offer.id}`}
+                        >
+                          <Edit className="w-5 h-5" />
+                        </a>
+                      ) : null}
                       {offer.affiliate_link ? (
                         <a
                           href={offer.affiliate_link}
@@ -135,6 +181,20 @@ export default function TravelOffersTable({ offers }: TravelOffersTableProps) {
                       ) : !offer.affiliate_link ? (
                         <Globe className="w-5 h-5 text-slate-200" />
                       ) : null}
+                      <button
+                        type="button"
+                        onClick={() => onDelete(offer)}
+                        disabled={deletingOfferId === offer.id}
+                        className="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all duration-300 disabled:opacity-60"
+                        title="Delete"
+                        aria-label={`Delete travel offer ${offer.id}`}
+                      >
+                        {deletingOfferId === offer.id ? (
+                          <div className="h-5 w-5 rounded-full border-2 border-rose-300 border-t-transparent animate-spin" />
+                        ) : (
+                          <Trash2 className="w-5 h-5" />
+                        )}
+                      </button>
                     </div>
                   </td>
                 </tr>
