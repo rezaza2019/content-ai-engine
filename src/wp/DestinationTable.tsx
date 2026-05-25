@@ -3,7 +3,6 @@ import {
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
-  ExternalLink,
   Edit,
   Eye,
   Globe,
@@ -77,13 +76,13 @@ export default function DestinationTable({
                 {t.destination}
               </th>
               <th className="px-8 py-6 text-left text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
-                {t.price}
+                {t.region}
               </th>
               <th className="px-8 py-6 text-left text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
-                {t.duration}
+                {t.country}
               </th>
               <th className="px-8 py-6 text-left text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
-                {t.departure}
+                {t.typeOfDestination}
               </th>
               <th className="px-8 py-6 text-left text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
                 {t.updated}
@@ -118,31 +117,34 @@ export default function DestinationTable({
                       <div
                         className="text-lg font-extrabold text-slate-900 group-hover:text-sky-600 transition-colors"
                         dangerouslySetInnerHTML={{
-                          __html: destination.title?.rendered || "",
+                          __html:
+                            destination.destination_name ||
+                            destination.title?.rendered ||
+                            "",
                         }}
                       />
                       <div className="text-sm text-slate-400 font-medium">
                         #{destination.id} - {destination.slug}
+                        {destination.destination_identifier
+                          ? ` · ${destination.destination_identifier}`
+                          : ""}
                       </div>
                     </div>
                   </div>
                 </td>
                 <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="bg-sky-50 text-sky-700 px-4 py-2 rounded-xl inline-flex items-center gap-1 font-black text-base shadow-sm shadow-sky-100/50">
-                    {destination.price ? `${destination.price} EUR` : "-"}
+                  <div className="text-slate-700 font-bold">
+                    {destination.destination_region || "-"}
                   </div>
                 </td>
                 <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="text-slate-700 font-bold flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-slate-300" />
-                    {destination.duration
-                      ? `${destination.duration} ${t.days}`
-                      : "-"}
+                  <div className="text-slate-700 font-bold uppercase">
+                    {destination.destination_country || "-"}
                   </div>
                 </td>
                 <td className="px-8 py-6 whitespace-nowrap">
-                  <div className="text-slate-500 font-semibold italic">
-                    {destination.departure_date || "-"}
+                  <div className="text-slate-500 font-semibold">
+                    {destination.type_of_destination || "-"}
                   </div>
                 </td>
                 <td className="px-8 py-6 whitespace-nowrap">
@@ -152,7 +154,7 @@ export default function DestinationTable({
                   {isStale(destination.modified || destination.date) && (
                     <div className="mt-2 inline-flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-700 ring-1 ring-amber-100">
                       <AlertTriangle className="w-4 h-4" />
-                      Update prices
+                      Needs review
                     </div>
                   )}
                   {destination.date && destination.modified && destination.date !== destination.modified && (
@@ -196,19 +198,6 @@ export default function DestinationTable({
                         <Trash2 className="w-5 h-5" />
                       )}
                     </button>
-                    {destination.aff_link && (
-                      <a
-                        href={destination.aff_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-3 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-2xl transition-all duration-300"
-                        title="Link"
-                        aria-label={`Open destination ${destination.id} affiliate link`}
-                        data-testid={`destination-${destination.id}-affiliate-link`}
-                      >
-                        <ExternalLink className="w-5 h-5" />
-                      </a>
-                    )}
                   </div>
                 </td>
               </tr>
