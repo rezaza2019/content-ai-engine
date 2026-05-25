@@ -109,19 +109,32 @@ export default function TravelOffersTable({ offers }: TravelOffersTableProps) {
                   </td>
                   <td className="px-8 py-6 whitespace-nowrap">
                     <div className="flex justify-center items-center gap-2">
+                      {offer.affiliate_link ? (
+                        <a
+                          href={offer.affiliate_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-2xl transition-all duration-300"
+                          title="Open affiliate link"
+                          aria-label={`Open affiliate link for travel offer ${offer.id}`}
+                        >
+                          <ExternalLink className="w-5 h-5" />
+                        </a>
+                      ) : null}
                       {offer.link ? (
                         <a
                           href={offer.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-2xl transition-all duration-300"
-                          title="Open travel offer"
+                          title="Open travel offer in WordPress"
+                          aria-label={`Open travel offer ${offer.id} in WordPress`}
                         >
-                          <ExternalLink className="w-5 h-5" />
+                          <Globe className="w-5 h-5" />
                         </a>
-                      ) : (
+                      ) : !offer.affiliate_link ? (
                         <Globe className="w-5 h-5 text-slate-200" />
-                      )}
+                      ) : null}
                     </div>
                   </td>
                 </tr>
