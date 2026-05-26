@@ -10,6 +10,7 @@ export type Accommodation = {
   excerpt?: RenderedText | string;
   status?: string;
   link?: string;
+  admin_edit_link?: string;
   imageUrl?: string;
   name?: string;
   country?: string;

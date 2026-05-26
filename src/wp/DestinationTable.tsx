@@ -129,6 +129,30 @@ export default function DestinationTable({
                           ? ` · ${destination.destination_identifier}`
                           : ""}
                       </div>
+                      <div className="mt-3 flex items-center gap-2 xl:hidden">
+                        <Link
+                          to={`/wp/destinations/${destination.id}/edit`}
+                          className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-amber-50 text-amber-600"
+                          title="Edit"
+                          aria-label={`Edit destination ${destination.id}`}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => onDelete(destination)}
+                          disabled={deletingDestinationId === destination.id}
+                          className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 disabled:opacity-60"
+                          title="Delete"
+                          aria-label={`Delete destination ${destination.id}`}
+                        >
+                          {deletingDestinationId === destination.id ? (
+                            <div className="h-4 w-4 rounded-full border-2 border-rose-300 border-t-transparent animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </td>

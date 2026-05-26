@@ -9,6 +9,7 @@ export type TravelOffer = {
   excerpt?: RenderedText | string;
   status?: string;
   link?: string;
+  admin_edit_link?: string;
   imageUrl?: string;
   price_per_person_from?: string | number;
   duration_days?: string | number;

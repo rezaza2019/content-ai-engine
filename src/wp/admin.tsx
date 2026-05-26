@@ -11,9 +11,9 @@ import {
 } from "../services/geminiApi";
 import { fetchTicketDeals, TicketProduct } from "../services/ticketApi";
 import { fetchWpTickets } from "../services/ticketWpApi";
-import { fetchDeals } from "../services/dealApi";
-import { fetchAccommodations } from "../services/accommodationApi";
-import { fetchTravelOffers } from "../services/travelOfferApi";
+import { deleteDeal, fetchDeals } from "../services/dealApi";
+import { deleteAccommodation, fetchAccommodations } from "../services/accommodationApi";
+import { deleteTravelOffer, fetchTravelOffers } from "../services/travelOfferApi";
 import { mergeTickets } from "../utils/mergeTickets";
 import { Destination } from "../types/destination";
 import { Deal } from "../types/deal";
@@ -65,6 +65,15 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
   const [deletingDestinationId, setDeletingDestinationId] = useState<
     string | number | null
   >(null);
+  const [deletingAccommodationId, setDeletingAccommodationId] = useState<
+    string | number | null
+  >(null);
+  const [deletingTravelOfferId, setDeletingTravelOfferId] = useState<
+    string | number | null
+  >(null);
+  const [deletingDealId, setDeletingDealId] = useState<string | number | null>(
+    null,
+  );
   const [showSmartImport, setShowSmartImport] = useState(false);
   const [showAccommodationJsonImport, setShowAccommodationJsonImport] =
     useState(false);
@@ -153,6 +162,67 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
       alert(`Delete failed: ${err.message}`);
     } finally {
       setDeletingDestinationId(null);
+    }
+  };
+
+  const handleDeleteAccommodation = async (accommodation: Accommodation) => {
+    if (!accommodation.id) return;
+    const name =
+      accommodation.name ||
+      (typeof accommodation.title === "string"
+        ? accommodation.title
+        : accommodation.title?.rendered) ||
+      `#${accommodation.id}`;
+
+    if (!window.confirm(`Delete accommodation "${name}"?`)) return;
+
+    setDeletingAccommodationId(accommodation.id);
+    try {
+      await deleteAccommodation(accommodation.id);
+      setAccommodations((prev) =>
+        prev.filter((item) => item.id !== accommodation.id),
+      );
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message}`);
+    } finally {
+      setDeletingAccommodationId(null);
+    }
+  };
+
+  const handleDeleteTravelOffer = async (offer: TravelOffer) => {
+    if (!offer.id) return;
+    const title =
+      typeof offer.title === "string" ? offer.title : offer.title?.rendered;
+
+    if (!window.confirm(`Delete travel offer "${title || `#${offer.id}`}"?`)) {
+      return;
+    }
+
+    setDeletingTravelOfferId(offer.id);
+    try {
+      await deleteTravelOffer(offer.id);
+      setTravelOffers((prev) => prev.filter((item) => item.id !== offer.id));
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message}`);
+    } finally {
+      setDeletingTravelOfferId(null);
+    }
+  };
+
+  const handleDeleteDeal = async (deal: Deal) => {
+    if (!deal.id) return;
+    const title = deal.name || deal.title?.rendered || `#${deal.id}`;
+
+    if (!window.confirm(`Delete deal "${title}"?`)) return;
+
+    setDeletingDealId(deal.id);
+    try {
+      await deleteDeal(deal.id);
+      setDeals((prev) => prev.filter((item) => item.id !== deal.id));
+    } catch (err: any) {
+      alert(`Delete failed: ${err.message}`);
+    } finally {
+      setDeletingDealId(null);
     }
   };
 
@@ -321,11 +391,23 @@ export default function AdminPage({ onLogout }: AdminPageProps) {
               onQuickImport={handleQuickImportTicket}
             />
           ) : activeTab === "deals" ? (
-            <DealsTable deals={deals} />
+            <DealsTable
+              deals={deals}
+              deletingDealId={deletingDealId}
+              onDelete={handleDeleteDeal}
+            />
           ) : activeTab === "accommodations" ? (
-            <AccommodationsTable accommodations={accommodations} />
+            <AccommodationsTable
+              accommodations={accommodations}
+              deletingAccommodationId={deletingAccommodationId}
+              onDelete={handleDeleteAccommodation}
+            />
           ) : (
-            <TravelOffersTable offers={travelOffers} />
+            <TravelOffersTable
+              offers={travelOffers}
+              deletingOfferId={deletingTravelOfferId}
+              onDelete={handleDeleteTravelOffer}
+            />
           )}
         </div>
       </main>

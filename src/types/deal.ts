@@ -7,6 +7,7 @@ export type Deal = {
   content?: RenderedText;
   status?: string;
   link?: string;
+  admin_edit_link?: string;
   imageUrl?: string;
   name?: string;
   discounted_price?: string | number;

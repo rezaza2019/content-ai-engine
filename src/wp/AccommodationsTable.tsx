@@ -1,10 +1,12 @@
-import { Building2, ExternalLink, Globe } from "lucide-react";
+import { Building2, Edit, ExternalLink, Globe, Trash2 } from "lucide-react";
 import { Accommodation } from "../types/accommodation";
 import { RenderedText } from "../types/destination";
 import { translations } from "./translations";
 
 type AccommodationsTableProps = {
   accommodations: Accommodation[];
+  deletingAccommodationId?: string | number | null;
+  onDelete: (accommodation: Accommodation) => void;
 };
 
 const getPlainTitle = (title?: RenderedText | string) => {
@@ -15,6 +17,8 @@ const getPlainTitle = (title?: RenderedText | string) => {
 
 export default function AccommodationsTable({
   accommodations,
+  deletingAccommodationId,
+  onDelete,
 }: AccommodationsTableProps) {
   const t = translations.en;
 
@@ -78,6 +82,34 @@ export default function AccommodationsTable({
                         <div className="text-sm text-slate-400 font-medium">
                           #{item.id} - {item.slug}
                         </div>
+                        <div className="mt-3 flex items-center gap-2 xl:hidden">
+                          {item.admin_edit_link ? (
+                            <a
+                              href={item.admin_edit_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-amber-50 text-amber-600"
+                              title="Edit in WordPress"
+                              aria-label={`Edit accommodation ${item.id}`}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </a>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => onDelete(item)}
+                            disabled={deletingAccommodationId === item.id}
+                            className="h-9 w-9 inline-flex items-center justify-center rounded-xl bg-rose-50 text-rose-600 disabled:opacity-60"
+                            title="Delete"
+                            aria-label={`Delete accommodation ${item.id}`}
+                          >
+                            {deletingAccommodationId === item.id ? (
+                              <div className="h-4 w-4 rounded-full border-2 border-rose-300 border-t-transparent animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -109,6 +141,17 @@ export default function AccommodationsTable({
                   </td>
                   <td className="px-8 py-6 whitespace-nowrap">
                     <div className="flex justify-center items-center gap-2">
+                      {item.admin_edit_link ? (
+                        <a
+                          href={item.admin_edit_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-3 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-2xl transition-all duration-300"
+                          title="Edit in WordPress"
+                        >
+                          <Edit className="w-5 h-5" />
+                        </a>
+                      ) : null}
                       {item.link ? (
                         <a
                           href={item.link}
@@ -122,6 +165,20 @@ export default function AccommodationsTable({
                       ) : (
                         <Globe className="w-5 h-5 text-slate-200" />
                       )}
+                      <button
+                        type="button"
+                        onClick={() => onDelete(item)}
+                        disabled={deletingAccommodationId === item.id}
+                        className="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-2xl transition-all duration-300 disabled:opacity-60"
+                        title="Delete"
+                        aria-label={`Delete accommodation ${item.id}`}
+                      >
+                        {deletingAccommodationId === item.id ? (
+                          <div className="h-5 w-5 rounded-full border-2 border-rose-300 border-t-transparent animate-spin" />
+                        ) : (
+                          <Trash2 className="w-5 h-5" />
+                        )}
+                      </button>
                     </div>
                   </td>
                 </tr>

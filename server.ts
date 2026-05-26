@@ -42,7 +42,6 @@ async function startServer() {
     process.env.ADMIN_PASSWORD ||
     "content-ai-engine-dev-session-secret";
   const adminSessionTtlMs = 1000 * 60 * 60 * 12;
-  const isLocalDevelopment = process.env.NODE_ENV !== "production";
   const isLocalRequest = (req: express.Request) => {
     const host = (req.headers.host || "").split(":")[0];
     return host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0";
@@ -95,10 +94,6 @@ async function startServer() {
   };
 
   const isAdminAuthenticated = (req: express.Request) => {
-    if (isLocalDevelopment || isLocalRequest(req)) {
-      return false;
-    }
-
     const cookies = parseCookies(req.headers.cookie);
     return isValidSessionToken(cookies.admin_session);
   };
@@ -123,7 +118,7 @@ async function startServer() {
   app.post("/api/admin-auth/login", (req, res) => {
     const { username, password } = req.body || {};
 
-    if (isLocalDevelopment || isLocalRequest(req)) {
+    if (isLocalRequest(req)) {
       return res.status(403).json({
         error:
           "Admin login is disabled on local development. Run the app in a production environment with ADMIN_PASSWORD configured to use admin login.",
@@ -149,7 +144,7 @@ async function startServer() {
     res.json({ authenticated: false });
   });
 
-  app.use("/api/wp", (req, res, next) => {
+  app.use("/api", (req, res, next) => {
     if (isLocalRequest(req)) {
       return next();
     }
@@ -230,6 +225,9 @@ async function startServer() {
   const getWpField = (post: any, field: string) =>
     post?.acf?.[field] ?? post?.meta?.[field] ?? "";
 
+  const getWpAdminEditLink = (post: any) =>
+    post?.id ? `${wpBaseUrl}/wp-admin/post.php?post=${post.id}&action=edit` : "";
+
   const getDestinationPhotoUrl = (post: any) => {
     const photos = getWpField(post, "destination_photo");
 
@@ -261,6 +259,8 @@ async function startServer() {
     modified: post.modified,
     title: post.title,
     content: post.content,
+    link: post.link,
+    admin_edit_link: getWpAdminEditLink(post),
     destination_name: getWpField(post, "destination_name"),
     destination_identifier: getWpField(post, "destination_identifier"),
     type_of_destination: getWpField(post, "type_of_destination"),
@@ -284,6 +284,7 @@ async function startServer() {
     title: post.title,
     status: post.status,
     link: post.link,
+    admin_edit_link: getWpAdminEditLink(post),
     imageUrl: post?._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
     trade_tracker_id: getWpField(post, "trade_tracker_id"),
     price: getWpField(post, "price"),
@@ -300,6 +301,7 @@ async function startServer() {
     content: post.content,
     status: post.status,
     link: post.link,
+    admin_edit_link: getWpAdminEditLink(post),
     imageUrl: post?._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
     name: getWpField(post, "name"),
     discounted_price: getWpField(post, "discounted_price"),
@@ -320,6 +322,7 @@ async function startServer() {
     excerpt: post.excerpt,
     status: post.status,
     link: post.link,
+    admin_edit_link: getWpAdminEditLink(post),
     imageUrl: post?._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
     name: getWpField(post, "name"),
     country: getWpField(post, "country"),
@@ -341,6 +344,7 @@ async function startServer() {
     excerpt: post.excerpt,
     status: post.status,
     link: post.link,
+    admin_edit_link: getWpAdminEditLink(post),
     imageUrl: post?._embedded?.["wp:featuredmedia"]?.[0]?.source_url,
     price_per_person_from: getWpField(post, "price_per_person_from"),
     duration_days: getWpField(post, "duration_days"),
@@ -916,6 +920,24 @@ async function startServer() {
       console.error("WordPress Deals Error:", error);
       res.status(502).json({
         error: error instanceof Error ? error.message : "Failed to fetch WordPress deals",
+      });
+    }
+  });
+
+  app.delete("/api/wp/deals/:id", async (req, res) => {
+    try {
+      ensureWpWriteCredentials();
+      const post = await wpRequest(
+        `/${wpPostTypes.deals}/${req.params.id}`,
+        {
+          method: "DELETE",
+        },
+      );
+      res.json(post);
+    } catch (error) {
+      console.error("WordPress Delete Deal Error:", error);
+      res.status(wpWriteErrorStatus(error)).json({
+        error: formatWpWriteError(error),
       });
     }
   });
